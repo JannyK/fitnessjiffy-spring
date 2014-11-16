@@ -2,10 +2,10 @@
 
 # FitnessJiffy (Java / Spring Framework version)
 
-* Intro and Background
-* Technologies Used
-* Future Technical Roadmap
-* Application Features and Screenshots
+* [Intro and Background](#intro-and-background)
+* [Technologies Used](#technologies-used)
+* [Future Technical Roadmap](#future-technical-roadmap)
+* [Application Features and Screenshots](#application-features-and-screenshots)
 
 ## Intro and Background
 
@@ -19,6 +19,10 @@ This version is based on [Java](http://www.oracle.com/technetwork/java/index.htm
 [Spring Boot](http://projects.spring.io/spring-boot/) in particular.  I used the code and build process here as 
 the basis for a lengthy blog post on Spring Boot (http://steveperkins.com/use-spring-boot-next-project), which 
 was linked from the Spring website and drew a bit of attention in that community.
+
+[FitnessJiffy ETL](https://github.com/steve-perkins/fitnessjiffy-etl) is a companion project... a command-line tool 
+for migrating data from previous incarnations of this application, or for exporting the data from any version into 
+JSON format.
     
 ## Technologies Used 
 
@@ -47,6 +51,56 @@ Technologies that I plan to add for the 2.0 release:
 * A client-side data binding framework (probably [AngularJS](https://angularjs.org/)... but due to the weird split between Angular 1.x and 2.x, I'm also considering [Ember.js](http://emberjs.com/))
 * I'd like to eventually experiment with swapping PostgreSQL for other datastores (e.g. [Cassandra](http://cassandra.apache.org/), [Redis](http://redis.io/), etc).  However, that might end up being a fork or completely different application instead.
 
-## Application Features
+## Application Features and Screenshots
+
+(click on a screenshot thumbnail to see its full size)
+
+Login and logout is built around Spring Security, with some custom event handling hooks.  In the future, I may add 
+OpenID or OAuth support, to let users authenticate through an existing provider account (e.g. Google, Yahoo, etc).  More 
+importantly, there is not yet a "Create User" function in the web application.  Users must be created in the 
+database manually.  This is not so much due to the complexity of adding a "Create User" page, but rather due to not 
+yet being ready to open it up a hosted version of the application for public use.
 
 <a href="https://github.com/steve-perkins/fitnessjiffy-spring/raw/screenshots/screenshots/login.png"><img src="https://github.com/steve-perkins/fitnessjiffy-spring/raw/screenshots/screenshots/login-thumbnail.png"/></a>
+
+Users can track their weight on a daily basis, and their profile will show their current body-mass index (BMI) and the 
+estimated number of daily calories needed to maintain their current weight:
+
+<a href="https://github.com/steve-perkins/fitnessjiffy-spring/raw/screenshots/screenshots/profile.png"><img src="https://github.com/steve-perkins/fitnessjiffy-spring/raw/screenshots/screenshots/profile-thumbnail.png"/></a>
+
+Tracking and editing of foods eaten each day:
+
+<a href="https://github.com/steve-perkins/fitnessjiffy-spring/raw/screenshots/screenshots/food-eaten.png"><img src="https://github.com/steve-perkins/fitnessjiffy-spring/raw/screenshots/screenshots/food-eaten-thumbnail.png"/></a>
+
+Recently-eaten foods (i.e. within the previous two weeks) appear in a convenient pull-down selector.  Users can also 
+search for foods by name, full or partial:
+
+<a href="https://github.com/steve-perkins/fitnessjiffy-spring/raw/screenshots/screenshots/food-search.png"><img src="https://github.com/steve-perkins/fitnessjiffy-spring/raw/screenshots/screenshots/food-search-thumbnail.png"/></a>
+
+The database includes a built-in set of "global" foods, which are visible to all users but cannot be modified.  When a user 
+modifies a "global" food, or simply creates a new food from scratch, then a food is created in that user's "private" 
+set of foods.  This is all transparent to the user.  
+
+<a href="https://github.com/steve-perkins/fitnessjiffy-spring/raw/screenshots/screenshots/food-create.png"><img src="https://github.com/steve-perkins/fitnessjiffy-spring/raw/screenshots/screenshots/food-create-thumbnail.png"/></a>
+
+The database includes comprehensive data on over 800 exercises, taken from the 
+[2011 Compendium of Physical Activities](https://sites.google.com/site/compendiumofphysicalactivities/).  By using the 
+user's weight on the date when an exercise was performed, FitnessJiffy can calculate how many calories were burned 
+by that particular user.
+
+<a href="https://github.com/steve-perkins/fitnessjiffy-spring/raw/screenshots/screenshots/exercise-performed.png"><img src="https://github.com/steve-perkins/fitnessjiffy-spring/raw/screenshots/screenshots/exercise-performed-thumbnail.png"/></a>
+
+Users have  quick access to recently-performed exercises (i.e. within the previous two weeks), can search for exercises 
+by full or partial name, and can browse exercises by category.
+
+<a href="https://github.com/steve-perkins/fitnessjiffy-spring/raw/screenshots/screenshots/exercise-search.png"><img src="https://github.com/steve-perkins/fitnessjiffy-spring/raw/screenshots/screenshots/exercise-search-thumbnail.png"/></a>
+
+FitnessJiffy stores for each day a summary of each user's stats (e.g. weight, calories burned, etc), for quick retrieval as JSON 
+so that charts can be rendered and report data summarized on the client-side.  Whenever any data pertaining to a user 
+changes, FitnessJiffy schedules a background thread to update that user's report data for the affected data range.  This 
+thread is scheduled to run after a five-minute delay, to avoid unnecessary duplication when the user makes multiple changes 
+within a short period of time.
+
+CHARTS AND REPORTS SCREENSHOT PENDING
+
+(this work is currently underway in the `reports` branch)
